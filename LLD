@@ -1,0 +1,115 @@
+// We need to host queues and db in the system
+// we can use httpresponse (webapi based responses and apis if we want an implementation like that) or if everything is local we can use internal proxies
+
+class LockVariables
+{
+    public:
+    static string lockVariable1; //for queue1
+    static string lockVariable2; //for queue2
+    static string lockVariablen; //for queuen
+    static string lockVariableQueueDB; //for DB related operations
+}
+
+class QueueService
+{
+    public:
+    string CaptureImage(int urgency, Type type)
+    {
+        // Assigns a random guid as RequestId
+        // Creates an entry in DB corresponsing to requestID - {RequestID, InProgress}
+        // Depending on the urgency, it enqueues the requestId along with type {RequestId, Type},
+        // Acquire the repective lock and enqueue the element
+        // we have separate queues for different urgencies
+        // Returns the guid as RequestId
+    }
+}
+
+
+
+class CommunicationService
+{
+    // Define multiple threads as per needs with same callable PollQueues()
+
+    private:
+    void SendRequest(string RequestId, Type type)
+    {
+        // Calls user to capture the image of type along with RequestId
+    }
+
+
+    public: 
+
+    void PollQueues()
+    {
+        bool needToSend = false;
+        String requestId;
+        Type type;
+        // Start with queue1 (most urgent task), repeat for others
+            // Check if the queue is empty, no? nothin neeeds to be done, conitnue for other queues
+                // acquire lock on lockvariable 
+                    // check if there are elements, yes? pop the top element set the rerquestId and type and needToSend to true; no? nothing needs to done
+                // release the lock
+                // Send the request if needToSend is set to be true
+                // set needToSend to false
+    }
+}
+
+class DBService
+{
+    public:
+    void UpdateDB()
+    {
+        bool needToSend = false;
+        string requestId;
+        string status;
+        Data d;
+        // Check if queue is empty; yes? nothing needs to be done, else:
+            // acquire lock on lockVariableQueueDB
+                // pop element, set needToSend to true, set requestId, status and data from the popped element
+            // release lock
+            // if needToSend set to true, update the DB with data along with status with failure or done and set variable to false, if needToSend set to false, nothing needs to be done
+    }
+
+    [Httpput] // we can use httpresponse here or pair<string, data> depending on the implementation
+    HttpResponse FindStatus(string RequestID)
+    {
+        // Read the data from database and send it back
+        // erase the entry
+    }
+}
+
+class User
+{
+    public:
+
+    void CaptureImage(string RequestId, Type type)
+    {
+        // Capture the Image
+        // Acuire lock on lockVariableQueueDB
+            // Enqeue {RequestId, data, status}
+        // Release lock
+    }
+}
+
+class Client
+{
+    public:
+    string requestID;
+    Thread t; 
+    Data d
+
+    void SendCaputreRequest(int urgency, Type t)
+    {
+        // call CaptureImage(u, t) in queue service, find the requestId from response and assign it to requestId variable;
+        // spawn thread with callable of FetchData for therequestId
+    }
+
+    void FetchData(requestID)
+    {
+        // Call Find Status in DBService
+        // parse data, check status, if it is InProgress, Keep on check, else:
+            // if succeeded, we have data, else it is failed - terminal states
+            // Terminate the thread
+    }
+    
+}
